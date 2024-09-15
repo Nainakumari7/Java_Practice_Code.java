@@ -1,83 +1,77 @@
 import java.util.Scanner;
 
-public class TicTacToe {
-    private static char[][] board = new char[3][3];
-    private static char currentPlayer = 'X';
+class Main {
+  public static void main(String[] args) {
+    char[][] board = new char[3][3];
+    for (int row = 0; row < board.length; row++) {
+      for (int col = 0; col < board[row].length; col++) {
+        board[row][col] = ' ';
+      }
+    }
 
-    public static void main(String[] args) {
-        initializeBoard();
-        printBoard();
+    char player = 'X';
+    boolean gameOver = false;
+    Scanner scanner = new Scanner(System.in);
 
-        while (true) {
-            playerMove();
-            printBoard();
-            if (checkWinner()) {
-                System.out.println("Player " + currentPlayer + " wins!");
-                break;
-            }
-            if (isBoardFull()) {
-                System.out.println("The game is a draw!");
-                break;
-            }
-            switchPlayer();
-        }
-    }
-    private static void initializeBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = '-';
-            }
-        }
-    }
-    private static void printBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-    private static void playerMove() {
-        Scanner scanner = new Scanner(System.in);
-        int row, col;
-        while (true) {
-            System.out.println("Player " + currentPlayer + ", enter your move (row and column): ");
-            row = scanner.nextInt() - 1;
-            col = scanner.nextInt() - 1;
-            if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == '-') {
-                board[row][col] = currentPlayer;
-                break;
-            } else {
-                System.out.println("This move is not valid, try again.");
-            }
-        }
-    }
-    private static void switchPlayer() {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-    }
-    private static boolean checkWinner() {
-        // Check rows and columns
-        for (int i = 0; i < 3; i++) {
-            if ((board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) ||
-                (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer)) {
-                return true;
-            }
-        }
-        if ((board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) ||
-            (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer)) {
-            return true;
-        }
+    while (!gameOver) {
+      printBoard(board);
+      System.out.print("Player " + player + " enter: ");
+      int row = scanner.nextInt();
+      int col = scanner.nextInt();
+      System.out.println();
 
-        return false;
-    }
-    private static boolean isBoardFull() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == '-') {
-                    return false;
-                }
-            }
+      if (board[row][col] == ' ') {
+        board[row][col] = player; // place the element
+        gameOver = haveWon(board, player);
+        if (gameOver) {
+          System.out.println("Player " + player + " has won: ");
+        } else {
+          // if (player == 'X') {
+          // player = 'O';
+          // } else {
+          // player = 'X';
+          // }
+          player = (player == 'X') ? 'O' : 'X';
         }
+      } else {
+        System.out.println("Invalid move. Try again!");
+      }
+    }
+    printBoard(board);
+  }
+
+  public static boolean haveWon(char[][] board, char player) {
+    // check the rows
+    for (int row = 0; row < board.length; row++) {
+      if (board[row][0] == player && board[row][1] == player && board[row][2] == player) {
         return true;
+      }
     }
+
+    // check for col
+    for (int col = 0; col < board[0].length; col++) {
+      if (board[0][col] == player && board[1][col] == player && board[2][col] == player) {
+        return true;
+      }
+    }
+
+    // diagonal
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+      return true;
+    }
+
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+      return true;
+    }
+    return false;
+  }
+
+  public static void printBoard(char[][] board) {
+    for (int row = 0; row < board.length; row++) {
+      for (int col = 0; col < board[row].length; col++) {
+        System.out.print(board[row][col] + " | ");
+      }
+      System.out.println();
+    }
+  }
 }
